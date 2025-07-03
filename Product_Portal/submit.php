@@ -1,19 +1,20 @@
 <?php
 include 'includes/db.php';
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $name = $_POST['name'];
-    $specs = $_POST['specs'];
-    $price = $_POST['price'];
+$name = $_POST['name'];
+$specs = $_POST['specs'];
+$price = $_POST['price'];
 
-    $image = $_FILES['image']['name'];
-    $target = "uploads/" . basename($image);
-    move_uploaded_file($_FILES['image']['tmp_name'], $target);
+$target_dir = "uploads/";
+$imageName = basename($_FILES["image"]["name"]);
+$target_file = $target_dir . uniqid() . "_" . $imageName;
 
-    $stmt = $conn->prepare("INSERT INTO products (name, specs, price, image) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("ssds", $name, $specs, $price, $image);
+if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
+    $stmt = $conn->prepare("INSERT INTO products (name, specs, price, image, status) VALUES (?, ?, ?, ?, 'pending')");
+    $stmt->bind_param("ssds", $name, $specs, $price, $target_file);
     $stmt->execute();
-
-    echo "Product submitted for approval. <a href='seller.php'>Submit another</a>";
+    header("Location: seller.php?success=1");
+} else {
+    echo "Error uploading file.";
 }
 ?>

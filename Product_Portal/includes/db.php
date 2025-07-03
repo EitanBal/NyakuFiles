@@ -1,11 +1,6 @@
 <?php
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db = "product_portal";
+$conn = new mysqli("localhost", "root", "", "product_portal");
 
-$conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-?>
